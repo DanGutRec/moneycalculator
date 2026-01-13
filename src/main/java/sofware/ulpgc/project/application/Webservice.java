@@ -1,5 +1,7 @@
 package sofware.ulpgc.project.application;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import sofware.ulpgc.project.io.CurrencyImport;
 import sofware.ulpgc.project.io.ExchangeRateImport;
 import sofware.ulpgc.project.model.Currency;
@@ -7,6 +9,8 @@ import sofware.ulpgc.project.model.ExchangeRate;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,20 +22,40 @@ public class Webservice {
         @Override
         public  List<Currency> importCurrencies() {
             try {
-                return importCurrencies(new CurrencyDataFetcher().fetch(url+"codes"));
+                return importCurrencies(new CurrencyCodesDataFetcher().fetch(url));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
         private List<Currency> importCurrencies(InputStream urlInput) throws IOException {
-            return new CurrencyJsonParser().parse(urlInput);
+            return readCurrencies(new CurrencyJsonParser().parse(urlInput).getAsJsonArray());
         }
+        private ArrayList<Currency> readCurrencies(JsonArray codes) {
+            ArrayList<Currency> currencies = new ArrayList<>();
+            codes.forEach(code -> currencies.add(toCurrency(code.getAsJsonArray())));
+            return currencies;
+        }
+        private Currency toCurrency(JsonArray code) {
+            return Currency.create(getString(code.get(0)),getString(code.get(1)));
+        }
+        private static String getString(JsonElement code) {
+            return code.getAsString();
+        }
+
     }
     public static class ExchangeRateImporterAPI implements ExchangeRateImport {
 
         @Override
         public ExchangeRate importExchangeRate(Currency from, Currency to) {
-            return null;
+            return new ExchangeRate(LocalDate.now(),from,to,calculateRate(from.getCode(),to.getCode()));
+        }
+
+        private double calculateRate(String from, String to) {
+            return calculateRate(new ExchangeRateFetch().fetch(url, from, to));
+        }
+
+        private double calculateRate(InputStream fetch) {
+            return new ExchangeRateJsonParse().parse(fetch).getAsDouble();
         }
     }
 
