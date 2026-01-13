@@ -1,3 +1,3 @@
-package sofware.ulpgc.project.project.model;
+package sofware.ulpgc.project.model;
 
 public record Money(int amount, Currency currency){}
