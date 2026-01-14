@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Webservice {
@@ -20,19 +22,20 @@ public class Webservice {
 
     public static class CurrencyImporterAPI implements CurrencyImport {
         @Override
-        public  List<Currency> importCurrencies() {
+        public  Map<String,Currency> importCurrencies() {
             try {
                 return importCurrencies(new CurrencyCodesDataFetcher().fetch(url));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        private List<Currency> importCurrencies(InputStream urlInput) throws IOException {
+        private Map<String,Currency> importCurrencies(InputStream urlInput) throws IOException {
             return readCurrencies(new CurrencyJsonParser().parse(urlInput).getAsJsonArray());
         }
-        private ArrayList<Currency> readCurrencies(JsonArray codes) {
-            ArrayList<Currency> currencies = new ArrayList<>();
-            codes.forEach(code -> currencies.add(toCurrency(code.getAsJsonArray())));
+        private Map<String,Currency> readCurrencies(JsonArray codes) {
+            Map<String,Currency> currencies = new HashMap<>();
+            codes.forEach(code -> currencies.put(getString(code.getAsJsonArray().get(0)),
+                    toCurrency(code.getAsJsonArray())));
             return currencies;
         }
         private Currency toCurrency(JsonArray code) {
