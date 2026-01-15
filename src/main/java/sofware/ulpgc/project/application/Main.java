@@ -8,9 +8,9 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        Map<String,Currency> currencies = new Webservice.CurrencyImporterAPI().importCurrencies();
+        List<Currency> currencies = new Webservice.CurrencyImporterAPI().importCurrencies();
         ExchangeRate rate= null;
-        currencies.forEach( (key , currency) -> System.out.println(key + ": " + currency.getCountry()));
+        currencies.forEach(System.out::println);
 
     }
 }

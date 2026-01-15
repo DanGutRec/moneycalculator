@@ -22,19 +22,19 @@ public class Webservice {
 
     public static class CurrencyImporterAPI implements CurrencyImport {
         @Override
-        public  Map<String,Currency> importCurrencies() {
+        public  List<Currency> importCurrencies() {
             try {
                 return importCurrencies(new CurrencyCodesDataFetcher().fetch(url));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        private Map<String,Currency> importCurrencies(InputStream urlInput) throws IOException {
+        private List<Currency>  importCurrencies(InputStream urlInput) throws IOException {
             return readCurrencies(new CurrencyJsonParser().parse(urlInput).getAsJsonArray());
         }
-        private Map<String,Currency> readCurrencies(JsonArray codes) {
-            Map<String,Currency> currencies = new HashMap<>();
-            codes.forEach(code -> currencies.put(getString(code.getAsJsonArray().get(0)),
+        private List<Currency>  readCurrencies(JsonArray codes) {
+            List<Currency> currencies = new ArrayList<>();
+            codes.forEach(code -> currencies.add(
                     toCurrency(code.getAsJsonArray())));
             return currencies;
         }

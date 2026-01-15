@@ -20,4 +20,8 @@ public class Currency{
     public String getCode() {
         return code;
     }
+    @Override
+    public String toString() {
+        return (code + ":" + country);
+    }
 }
