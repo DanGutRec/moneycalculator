@@ -7,6 +7,9 @@ import sofware.ulpgc.project.model.ExchangeRate;
 import sofware.ulpgc.project.model.Money;
 import sofware.ulpgc.project.ui.MoneyWidget;
 import sofware.ulpgc.project.ui.RateDisplay;
+import sofware.ulpgc.project.view.swing.components.SwingMoneyDisplay;
+
+import javax.swing.*;
 
 public class SwapCurrenciesCommand implements Command {
     private final MoneyWidget moneyWidgetFrom;
@@ -23,13 +26,21 @@ public class SwapCurrenciesCommand implements Command {
 
     @Override
     public void execute() {
-        int selectedFrom= moneyWidgetFrom.getCurrencyIndex();
-        moneyWidgetFrom.showCurrency(moneyWidgetTo.getCurrencyIndex());
-        moneyWidgetTo.showCurrency(selectedFrom);
-
-        ExchangeRate rate = getRate();
-        this.rateDisplay.show(rate);
-        this.moneyWidgetTo.showAmount(calculateRate(rate));
+        int selectedFrom = moneyWidgetFrom.getCurrencyIndex();
+        Money amountFrom = moneyWidgetFrom.getAmount();
+        Money amountTo = moneyWidgetTo.getAmount();
+        SwingMoneyDisplay.lockUpdates();
+        SwingUtilities.invokeLater(() -> {
+            try {
+                moneyWidgetFrom.showCurrency(moneyWidgetTo.getCurrencyIndex());
+                moneyWidgetTo.showCurrency(selectedFrom);
+                moneyWidgetFrom.showAmount(amountTo);
+                moneyWidgetTo.showAmount(amountFrom);
+                rateDisplay.show(getRate());
+            } finally {
+                SwingMoneyDisplay.unlockUpdates();
+            }
+        });
     }
 
     private Money calculateRate(ExchangeRate rate) {

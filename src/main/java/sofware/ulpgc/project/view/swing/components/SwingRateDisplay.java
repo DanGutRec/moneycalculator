@@ -1,4 +1,4 @@
-package sofware.ulpgc.project.swing.components;
+package sofware.ulpgc.project.view.swing.components;
 
 import sofware.ulpgc.project.model.ExchangeRate;
 import sofware.ulpgc.project.ui.RateDisplay;
@@ -7,10 +7,11 @@ import javax.swing.*;
 
 public class SwingRateDisplay extends JPanel implements RateDisplay {
     private final JLabel rateValue;
-
-    public SwingRateDisplay(ExchangeRate exchangeRate) {
+;
+    public SwingRateDisplay() {
         add(new JLabel("Rate Value:"));
-        add(this.rateValue = new JLabel(toString(exchangeRate.rate())));
+        add(this.rateValue = new JLabel("-"));
+
     }
 
     private String toString(double rate) {
@@ -19,6 +20,8 @@ public class SwingRateDisplay extends JPanel implements RateDisplay {
 
     @Override
     public void show(ExchangeRate rate) {
-        this.rateValue.setText(toString(rate.rate()));
+        SwingUtilities.invokeLater(() -> {
+            this.rateValue.setText(toString(rate.rate()));
+        });
     }
 }

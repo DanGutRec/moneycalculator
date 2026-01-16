@@ -17,7 +17,7 @@ import java.util.Map;
 
 
 public class Webservice {
-    private static final String key = "d85f4cf3fd1c81ad64dd6199";
+    private static final String key = "8b81eb61f2fab89a85bf0e8e";
     private static final String url = "https://v6.exchangerate-api.com/v6/YOUR-API-KEY/".replace("YOUR-API-KEY",key);
 
     public static class CurrencyImporterAPI implements CurrencyImport {

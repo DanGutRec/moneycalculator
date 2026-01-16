@@ -17,7 +17,7 @@ public class CommandFactory {
         return this;
     }
     
-    interface  Builder {
+    public interface  Builder {
         Command build();
     }
 }
